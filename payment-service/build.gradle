@@ -25,6 +25,8 @@ repositories {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-actuator',
 			'org.projectlombok:lombok:1.16.10',
-			"org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE")
+			"org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE",
+			'org.zalando:failsafe-actuator:0.4.0',
+			'net.jodah:failsafe:1.0.3')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

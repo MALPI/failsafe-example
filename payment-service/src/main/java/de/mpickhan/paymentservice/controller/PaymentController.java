@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URISyntaxException;
+
 /**
  * Created by mpickhan on 20.07.17.
  */
@@ -24,7 +26,7 @@ public class PaymentController {
   }
 
   @PostMapping
-  public ResponseEntity createPayment(@RequestBody final PaymentResource paymentResource) {
+  public ResponseEntity createPayment(@RequestBody final PaymentResource paymentResource) throws URISyntaxException {
 
     log.debug("Processing payment {}", paymentResource);
     boolean processingResult = processor.processPayment(paymentResource);

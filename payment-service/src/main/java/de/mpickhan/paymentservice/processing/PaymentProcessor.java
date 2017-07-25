@@ -2,6 +2,8 @@ package de.mpickhan.paymentservice.processing;
 
 import de.mpickhan.paymentservice.domain.PaymentResource;
 
+import java.net.URISyntaxException;
+
 /**
  * Created by mpickhan on 20.07.17.
  */
@@ -13,7 +15,7 @@ public class PaymentProcessor {
     this.solvencyClient = solvencyClient;
   }
 
-  public boolean processPayment(final PaymentResource resource) {
+  public boolean processPayment(final PaymentResource resource) throws URISyntaxException {
 
     /**
      * In a real world example here would probably happen other things as well,
