@@ -36,14 +36,11 @@ public class SolvencyClient {
 
   private final RetryPolicy retryPolicy;
 
-  private final List<Class<? extends Exception>> retryClasses;
-
   public SolvencyClient(final RestTemplate restTemplate,
                         @FailsafeBreaker(value = "solvency-circuit") final CircuitBreaker circuitBreaker) {
     this.restTemplate = restTemplate;
     this.circuitBreaker = circuitBreaker;
     this.retryPolicy = new RetryPolicy();
-    this.retryClasses = Arrays.asList(InterruptedIOException.class, ResourceAccessException.class);
   }
 
   @PostConstruct
@@ -53,7 +50,7 @@ public class SolvencyClient {
   }
 
   private void configureRetries() {
-    this.retryPolicy.retryOn((List<Class<? extends Throwable>>) this.retryClasses)
+    this.retryPolicy.retryOn(Arrays.asList(InterruptedIOException.class, ResourceAccessException.class))
      .withMaxRetries(3)
             .withBackoff(1,5, TimeUnit.SECONDS)
             .withJitter(10, TimeUnit.MILLISECONDS);
@@ -66,14 +63,20 @@ public class SolvencyClient {
             .withSuccessThreshold(3)
             .withDelay(10, TimeUnit.SECONDS);
 
-    this.circuitBreaker.failOn((List<Class<? extends Throwable>>) this.retryClasses);
+    this.circuitBreaker.failOn(Arrays.asList(InterruptedIOException.class, ResourceAccessException.class));
   }
 
   public boolean checkSolvency(final ConsumerResource consumerResource) throws URISyntaxException {
     log.debug("Running solvency check for {}", consumerResource.toString());
-    ResponseEntity<Boolean> booleanResponseEntity = Failsafe.with(this.circuitBreaker).with(this.retryPolicy).get(() ->
-                       restTemplate.postForEntity(new URI(BASE_URL), consumerResource, Boolean.class));
+    ResponseEntity<Boolean> booleanResponseEntity = Failsafe
+            .with(this.circuitBreaker)
+            .with(this.retryPolicy).withFallback(callAlternativeProvider())
+            .get(() -> restTemplate.postForEntity(new URI(BASE_URL), consumerResource, Boolean.class));
     log.debug("Received response {}", booleanResponseEntity.toString());
     return booleanResponseEntity.getBody().booleanValue();
+  }
+
+  private ResponseEntity<Boolean> callAlternativeProvider() {
+    return ResponseEntity.ok().body(true);
   }
 }

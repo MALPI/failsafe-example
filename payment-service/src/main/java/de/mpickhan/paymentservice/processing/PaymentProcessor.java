@@ -1,12 +1,15 @@
 package de.mpickhan.paymentservice.processing;
 
 import de.mpickhan.paymentservice.domain.PaymentResource;
+import lombok.extern.apachecommons.CommonsLog;
+import org.springframework.stereotype.Component;
 
 import java.net.URISyntaxException;
 
 /**
  * Created by mpickhan on 20.07.17.
  */
+@Component
 public class PaymentProcessor {
 
   private SolvencyClient solvencyClient;

@@ -21,7 +21,7 @@ public class PaymentController {
 
   private PaymentProcessor processor;
 
-  public PaymentController(PaymentProcessor processor) {
+  public PaymentController(final PaymentProcessor processor) {
     this.processor = processor;
   }
 
